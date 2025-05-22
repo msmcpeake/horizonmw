@@ -1,27 +1,5 @@
 [
     {
-        "UpdateStageName": "Steam Game Download",
-        "UpdateSourcePlatform": "All",
-        "UpdateSource": "SteamCMD",
-        "UpdateSourceData": "393100",
-        "UpdateSourceArgs": "393100",
-        "UnzipUpdateSource": false,
-        "OverwriteExistingFiles": false,
-        "ForceDownloadPlatform": "Windows",
-        "DeleteAfterExtract": true,
-        "OneShot": true
-    },
-    {
-        "UpdateStageName": "HMW Mod Download",
-        "UpdateSourcePlatform": "Windows",
-        "UpdateSource": "FetchURL",
-        "UpdateSourceData": "https://downloads.craftway.net/files/Games/HMW/HMW-mod_1.4.0.zip",
-        "UpdateSourceTarget": "{{$FullBaseDir}}",
-        "UnzipUpdateSource": true,
-        "OverwriteExistingFiles": true,
-        "DeleteAfterExtract": true
-    },    
-    {
         "UpdateStageName": "Main Directory Creation",
         "UpdateSourcePlatform": "All",
         "UpdateSource": "CreateDirectory",
@@ -38,7 +16,20 @@
         "UpdateSourcePlatform": "All",
         "UpdateSource": "CreateDirectory",
         "UpdateSourceArgs": "{{$FullBaseDir}}mods"
-    },    
+    },
+    {
+        "UpdateStageName": "Steam Game Download",
+        "UpdateSourcePlatform": "All",
+        "UpdateSource": "SteamCMD",
+        "UpdateSourceData": "393100",
+        "UpdateSourceArgs": "393100",
+        "UnzipUpdateSource": false,
+        "OverwriteExistingFiles": false,
+        "ForceDownloadPlatform": "Windows",
+        "DeleteAfterExtract": true,
+        "SkipOnFailure": true,
+        "OneShot": true
+    },
     {
         "UpdateStageName": "Config File Download",
         "UpdateSourcePlatform": "All",
@@ -56,5 +47,50 @@
         "UpdateSourceArgs": "auto_bots.gsc",
         "UpdateSourceTarget": "{{$FullBaseDir}}user_scripts/mp",
         "OverwriteExistingFiles": false
+    },
+    {
+        "UpdateStageName": "MWR Cleaner Download",
+        "UpdateSourcePlatform": "All",
+        "UpdateSource": "FetchURL",
+        "UpdateSourceData": "https://github.com/skkuull/cod-files-cleaner/releases/download/v1.1/mwr-files-cleaner.exe",
+        "UpdateSourceArgs": "mwr-files-cleaner.exe",
+        "UpdateSourceTarget": "{{$FullBaseDir}}",
+        "OverwriteExistingFiles": false,
+        "OneShot": true
+    },
+    {
+        "UpdateStageName": "Run MWR Cleaner",
+        "UpdateSourcePlatform": "Windows",
+        "UpdateSource": "Executable",
+        "UpdateSourceData": "cmd.exe",
+        "UpdateSourceArgs": "/C cd horizon-mw-call-of-duty-modern-warfare-2-multiplayer-resmastered\\393100 && .\\mwr-files-cleaner.exe",
+        "SkipOnFailure": true,
+        "OneShot": true
+    },
+    {
+        "UpdateStageName": "Update Script Download",
+        "UpdateSourcePlatform": "All",
+        "UpdateSource": "FetchURL",
+        "UpdateSourceData": "https://raw.githubusercontent.com/Draakoor/AMPTemplates/refs/heads/dev/horizon-mw-call-of-duty-modern-warfare-2-multiplayer-resmasteredserver.py",
+        "UpdateSourceArgs": "updater.py",
+        "UpdateSourceTarget": "{{$FullBaseDir}}",
+        "SkipOnFailure": true,
+        "OverwriteExistingFiles": false
+    },
+    {
+        "UpdateStageName": "Run Updater",
+        "UpdateSourcePlatform": "Windows",
+        "UpdateSource": "Executable",
+        "UpdateSourceData": "cmd.exe",
+        "UpdateSourceArgs": "/C cd horizon-mw-call-of-duty-modern-warfare-2-multiplayer-resmastered\\393100 && python .\\updater.py",
+        "SkipOnFailure": true
+    },
+    {
+        "UpdateStageName": "Temporary Fix for not installing steam",
+        "UpdateSourcePlatform": "Windows",
+        "UpdateSource": "Executable",
+        "UpdateSourceData": "cmd.exe",
+        "UpdateSourceArgs": "/C reg add \"HKCU\\Software\\Valve\\Steam\" /f",
+        "SkipOnFailure": true
     }
 ]
