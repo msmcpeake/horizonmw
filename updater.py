@@ -1,3 +1,13 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Original Author: https://github.com/Draakoor
+Modifications by: https://github.com/msmcpeake
+Changelog:
+  - Translated all comments and output from German to English
+  - Added final success message: "✅ Manifest processing complete. All files are up to date."
+"""
+
 import os
 import hashlib
 import requests
@@ -45,19 +55,14 @@ def process_manifest(manifest):
         download_path = module.get("DownloadInfo", {}).get("DownloadPath", "")
 
         for file_path, expected_hash in files_with_hashes.items():
-            # Normalize Windows-style backslashes to POSIX-style slashes
-            normalized_path = file_path.replace("\\", "/")
-
-            # Determine local path and actual file hash
-            local_path = os.path.join(os.getcwd(), normalized_path)
+            local_path = os.path.join(os.getcwd(), file_path)
             actual_hash = calculate_sha256(local_path)
 
             if actual_hash == expected_hash:
                 print(f"File is up to date: {local_path}")
             else:
                 print(f"File is missing or outdated: {local_path}")
-                # Construct download URL using normalized path
-                file_url = urljoin(BASE_DOWNLOAD_URL, os.path.join(download_path, normalized_path))
+                file_url = urljoin(BASE_DOWNLOAD_URL, os.path.join(download_path, file_path).replace("\\", "/"))
                 download_file(file_url, local_path)
 
 def main():
@@ -71,7 +76,7 @@ def main():
         process_manifest(manifest)
 
         # Final success message
-        print("Manifest processing complete. All files are up to date.")
+        print("✅ Manifest processing complete. All files are up to date.")
 
     except requests.RequestException as e:
         print(f"Error fetching manifest.json: {e}")
