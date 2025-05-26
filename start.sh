@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 
 # Ensure H2M directory exists
 if [ ! -d "H2M" ]; then
