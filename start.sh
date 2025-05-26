@@ -10,4 +10,6 @@ fi
 cd H2M || exit 1
 
 # Run the server with Wine
+wineserver -w
+env
 wine hmw-mod.exe -nosteam -dedicated -memoryfix +exec server.cfg +set net_ip 0.0.0.0 +set net_port "$SERVER_PORT" +map_rotate
