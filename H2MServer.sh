@@ -7,6 +7,7 @@ if [ ! -d "H2M" ]; then
 fi
 
 # Change into the H2M directory
+chmod -R 777 H2M
 cd H2M || exit 1
 
 # Run the server with Wine
