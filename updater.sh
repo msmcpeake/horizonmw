@@ -20,7 +20,7 @@ echo "$manifest" | jq -c '.Modules[]' | while read -r module; do
 
     echo "Processing module: $module_name (Version $module_version)"
 
-    echo "$module" | jq -r '.FilesWithHashes | to_entries[] | "\(.key)|\(.value)"' | while IFS="|" read -r file_path expected_hash; do
+    while IFS="|" read -r file_path expected_hash; do
         current=$((current + 1))
         file_path_clean=$(echo "$file_path" | sed 's|\\|/|g')
         local_path="./$file_path_clean"
@@ -46,7 +46,7 @@ echo "$manifest" | jq -c '.Modules[]' | while read -r module; do
                 echo "Downloaded: $local_path"
             fi
         fi
-    done
+    done < <(echo "$module" | jq -r '.FilesWithHashes | to_entries[] | "\(.key)|\(.value)"')
 done
 
 echo "Manifest processing complete. All files are up to date."
