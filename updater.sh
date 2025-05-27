@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Original Python Script Author: https://github.com/Draakoor
-# Bash Conversion by: https://github.com/msmcpeake
-
 set -e
 
 MANIFEST_URL="https://raw.githubusercontent.com/HMW-mod/hmw-distribution/refs/heads/master/manifest.json"
@@ -11,6 +8,11 @@ BASE_DOWNLOAD_URL="https://par-1.cdn.horizonmw.org/"
 echo "Downloading manifest.json..."
 manifest=$(curl -sSL "$MANIFEST_URL") || { echo "Failed to download manifest"; exit 1; }
 
+# Count total files
+total_files=$(echo "$manifest" | jq '[.Modules[].FilesWithHashes | keys] | flatten | length')
+current=0
+
+# Process each module
 echo "$manifest" | jq -c '.Modules[]' | while read -r module; do
     module_name=$(echo "$module" | jq -r '.Name')
     module_version=$(echo "$module" | jq -r '.Version')
@@ -19,6 +21,7 @@ echo "$manifest" | jq -c '.Modules[]' | while read -r module; do
     echo "Processing module: $module_name (Version $module_version)"
 
     echo "$module" | jq -r '.FilesWithHashes | to_entries[] | "\(.key)|\(.value)"' | while IFS="|" read -r file_path expected_hash; do
+        current=$((current + 1))
         file_path_clean=$(echo "$file_path" | sed 's|\\|/|g')
         local_path="./$file_path_clean"
         actual_hash=""
@@ -27,8 +30,10 @@ echo "$manifest" | jq -c '.Modules[]' | while read -r module; do
             actual_hash=$(sha256sum "$local_path" | awk '{print $1}')
         fi
 
+        echo -n "[$current/$total_files] "
+
         if [[ "$actual_hash" == "$expected_hash" ]]; then
-            echo "File is up to date: $local_path"
+            echo "Up to date: $file_path_clean"
         else
             echo "Downloading: $file_path_clean"
             file_url="${BASE_DOWNLOAD_URL}${download_path}/${file_path_clean}"
